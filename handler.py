@@ -2,7 +2,7 @@ import runpod
 import torch
 from sentence_transformers import SentenceTransformer
 
-print("Loading Octen-Embedding-8B model...")
+print("Loading model (this may take a few minutes on first start)...")
 model = SentenceTransformer(
     "Octen/Octen-Embedding-8B",
     model_kwargs={"torch_dtype": torch.float16},
