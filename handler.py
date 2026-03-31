@@ -1,12 +1,14 @@
 import runpod
 import torch
+import os
 from sentence_transformers import SentenceTransformer
 
-print("Loading model (this may take a few minutes on first start)...")
+print("Loading model...")
 model = SentenceTransformer(
     "Octen/Octen-Embedding-8B",
     model_kwargs={"torch_dtype": torch.float16},
-    trust_remote_code=True
+    trust_remote_code=True,
+    token=os.environ.get("HF_TOKEN")
 )
 print(f"Model loaded! Embedding dim: {model.get_sentence_embedding_dimension()}")
 
@@ -15,10 +17,8 @@ def handler(job):
     try:
         input_data = job["input"]
         texts = input_data.get("texts", [])
-
         if not texts:
             return {"error": "No texts provided"}
-
         embeddings = model.encode(
             texts,
             batch_size=8,
@@ -26,7 +26,6 @@ def handler(job):
             normalize_embeddings=True,
             convert_to_numpy=True
         )
-
         return {"embeddings": embeddings.tolist()}
     except Exception as e:
         return {"error": str(e)}
